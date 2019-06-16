@@ -5,18 +5,22 @@ var fs = require('fs')
  * @param {} title 
  * @param {*} author 
  */
-function addThread(title, author,callback) {
+function addThread(title, author, callback) {
 
 
-    fs.readFile('data.json', 'utf8', function readFileCallback(err, data){
-        if (err){
+    fs.readFile('data.json', 'utf8', function readFileCallback(err, data) {
+        if (err) {
             console.log(err);
         } else {
-        obj = JSON.parse(data); //now it an object
-        obj.table.push({id: 2, square:3}); //add some data
-        json = JSON.stringify(obj); //convert it back to json
-        fs.writeFile('data.json', json, 'utf8', callback); // write it back 
-    }});
+            obj = JSON.parse(data); //now it an object
+            obj.table.push({
+                judul: title,
+                pengarang: author
+            }); //add some data
+            json = JSON.stringify(obj); //convert it back to json
+            fs.writeFile('data.json', json, 'utf8', callback); // write it back 
+        }
+    });
 
 
 }
@@ -43,12 +47,18 @@ function loadThread() {
 }
 
 
-function filterThread(title) {
-    var parseJson = loadThread();
+function filterThread(title, callback) {
+    fs.readFile('data.json', 'utf8', function readFileCallback(err, data) {
+        if (err) {
+            callback(err,null)
+        } else {
+            obj = JSON.parse(data); //now it an object
+            const dataToKeep = obj.table.filter(d => d.judul === title)
+            callback(null, dataToKeep);
+        }
+    });
 
-    var dataToKeep = parseJson.filter(function (data) {
-        data.table.title != title
-    })
+
 
 }
 
@@ -68,6 +78,12 @@ function saveThread(threads) {
 }
 
 //running some services
-addThread("red ocean", "kim chan", function(err, data){
+/**addThread("factfullness", "hans rosling", function(err, data){
     console.log(data);
 });
+ */
+
+ filterThread('factfullness', function(err,result){
+     console.log(result)
+ });
+
