@@ -62,9 +62,23 @@ function filterThread(title, callback) {
 
 }
 
-function removeThread(title) {
+function removeThread(title,callback) {
     //filter thread by title
     //overwrite new threads without mentioned title
+    fs.readFile('data.json', 'utf8', function readFileCallback(err, data) {
+        if (err) {
+            callback(err,null)
+        } else {
+            obj = JSON.parse(data); //now it an object
+            const dataToRemove = obj.table.filter(d => d.judul != title)
+            obj.table = dataToRemove
+            console.log(obj)
+            json = JSON.stringify(obj);
+
+            fs.writeFileSync("data.json", json)
+            callback(null, dataToRemove);
+        }
+    });
 }
 
 /**
@@ -72,7 +86,6 @@ function removeThread(title) {
  * @param {*} threads 
  */
 function saveThread(threads) {
-    console.log("SAVE");
     console.log(threads);
     fs.writeFileSync("data.json", threads)
 }
@@ -83,7 +96,6 @@ function saveThread(threads) {
 });
  */
 
- filterThread('factfullness', function(err,result){
-     console.log(result)
+removeThread('factfullness', function(err,result){
  });
 
